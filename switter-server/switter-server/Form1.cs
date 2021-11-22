@@ -92,33 +92,40 @@ namespace switter_server
                     Byte[] buffer = new Byte[128];
                     newClient.Receive(buffer);
                     string incomingMessage = Encoding.Default.GetString(buffer);
-                    incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
+                    string username = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
 
 
-                    richtextbox_log.AppendText(incomingMessage + " is trying to connect\n");
+                    richtextbox_log.AppendText(username + " is trying to connect\n");
 
-                    if (userExist(incomingMessage))
+                    if (userExist(username))
                     {
-                        if (connectedUsers.Exists(x => x.Equals(incomingMessage))) {
+                        if (connectedUsers.Exists(x => x.Equals(username))) {
                             richtextbox_log.AppendText("User already connected!\n");
+                            Byte[] sweetsBuffer = Encoding.Default.GetBytes("This user is already connected");
+                            newClient.Send(sweetsBuffer);
                             newClient.Close();
                             clientSockets.Remove(newClient);
                         }
                         else
                         {
-                            connectedUsers.Add(incomingMessage);
-                            richtextbox_log.AppendText(incomingMessage + " connected!\n");
+                            connectedUsers.Add(username);
+                            richtextbox_log.AppendText(username + " connected!\n");
+                            Byte[] sweetsBuffer = Encoding.Default.GetBytes("Connected successfully");
+                            newClient.Send(sweetsBuffer);
+                            Thread receiveThread = new Thread(() => Receive(newClient, username)); // updated
+                            receiveThread.Start();
                         }
                     }
                     else
                     {
                         richtextbox_log.AppendText("User does not exist!\n");
+                        Byte[] sweetsBuffer = Encoding.Default.GetBytes("This user does not exist");
+                        newClient.Send(sweetsBuffer);
                         newClient.Close();
                         clientSockets.Remove(newClient);
                     }
 
-                    Thread receiveThread = new Thread(() => Receive(newClient)); // updated
-                    receiveThread.Start();
+                   
                 }
                 catch
                 {
@@ -142,7 +149,7 @@ namespace switter_server
             File.WriteAllLines("sweets.txt", sweets);
         }
 
-        private void Receive(Socket thisClient) // updated
+        private void Receive(Socket thisClient, string user) // updated
         {
             bool connected = true;
 
@@ -161,19 +168,29 @@ namespace switter_server
                         string allSweets = "";
                         foreach(string sweet in sweets)
                         {
-                            allSweets += sweet + "\n";
+                            if (sweet.Split(';')[0] != user)
+                            {
+                                allSweets += sweet + "\n";
+                            }
                         }
 
-                        richtextbox_log.AppendText("A client requested all sweets.\n");
+                        richtextbox_log.AppendText(user +" requested all sweets.\n");
 
                         Byte[] sweetsBuffer = Encoding.Default.GetBytes(allSweets);
                         thisClient.Send(sweetsBuffer);
+                    }
+                    else if(incomingMessage == "disconnect")
+                    {
+                        thisClient.Close();
+                        connectedUsers.Remove(user);
+                        clientSockets.Remove(thisClient);
+                        connected = false;
                     }
 
                     else
                     {
                         if(incomingMessage.Split(';').Length >= 2) { 
-                            string user = incomingMessage.Split(';')[0];
+                            user = incomingMessage.Split(';')[0];
                             string msg = incomingMessage.Split(';')[1];
 
                             if (userExist(user))
@@ -199,10 +216,11 @@ namespace switter_server
                 {
                     if (!terminating)
                     {
-                        richtextbox_log.AppendText("A client has disconnected\n");
+                        richtextbox_log.AppendText(user + " has disconnected\n");
                     }
                     thisClient.Close();
                     clientSockets.Remove(thisClient);
+                    connectedUsers.Remove(user);
                     connected = false;
                 }
             }
