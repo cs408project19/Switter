@@ -16,11 +16,11 @@ namespace switter_server
 {
     public partial class Form1 : Form
     {
-        bool terminating = false;   // deneme
+        bool terminating = false;   
         bool listening = false;
-        List<string> users;
-        List<string> connectedUsers = new List<string>();
-        List<string> sweets = new List<string>();
+        List<string> users;            // All saved users
+        List<string> connectedUsers = new List<string>();   // List of all connected users
+        List<string> sweets = new List<string>();           // List of all sweets
 
         Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         List<Socket> clientSockets = new List<Socket>();
@@ -32,17 +32,17 @@ namespace switter_server
             InitializeComponent();
         }
 
-        void readUserFile()
+        void readUserFile()         // Add all users in txt to users list
         {
             users = File.ReadAllLines("user-db.txt").ToList<string>();
         }
 
-        void readSweetsFile()
+        void readSweetsFile()       // When all sweets options called, we read this txt file and print it
         {
             sweets = File.ReadAllLines("sweets.txt").ToList<string>();
         }
 
-        bool userExist(string username)
+        bool userExist(string username)         // Search if this user is in users list
         {
             foreach(string u in users)
             {
@@ -97,16 +97,17 @@ namespace switter_server
 
                     richtextbox_log.AppendText(username + " is trying to connect\n");
 
-                    if (userExist(username))
+                    if (userExist(username))        // If the username exists in the users list
                     {
-                        if (connectedUsers.Exists(x => x.Equals(username))) {
+                        if (connectedUsers.Exists(x => x.Equals(username)))     // If the same username tries to connect
+                        {   
                             richtextbox_log.AppendText("User already connected!\n");
                             Byte[] sweetsBuffer = Encoding.Default.GetBytes("This user is already connected");
                             newClient.Send(sweetsBuffer);
                             newClient.Close();
                             clientSockets.Remove(newClient);
                         }
-                        else
+                        else            
                         {
                             connectedUsers.Add(username);
                             richtextbox_log.AppendText(username + " connected!\n");
@@ -116,7 +117,7 @@ namespace switter_server
                             receiveThread.Start();
                         }
                     }
-                    else
+                    else        
                     {
                         richtextbox_log.AppendText("User does not exist!\n");
                         Byte[] sweetsBuffer = Encoding.Default.GetBytes("This user does not exist");
@@ -163,10 +164,10 @@ namespace switter_server
                     string incomingMessage = Encoding.Default.GetString(buffer);
                     incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
 
-                    if (incomingMessage == "request")
+                    if (incomingMessage == "request")       // if "request" message comes from client(user), print all the sweets except user's sweets
                     {
                         string allSweets = "";
-                        foreach(string sweet in sweets)
+                        foreach(string sweet in sweets)        // Accumulate all sweets in one string
                         {
                             if (sweet.Split(';')[0] != user)
                             {

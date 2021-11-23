@@ -85,7 +85,8 @@ namespace switter_client
                     incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
 
                     if (incomingMessage.Equals("This user does not exist") || incomingMessage.Equals("This user is already connected"))
-                    {
+                    {   // If the user is not in the server's userlist or already connected to the server
+
                         logs.AppendText("Server: " + incomingMessage + "\n");
                         connected = false;
                         logs.AppendText("The server has disconnected\n");
@@ -101,7 +102,7 @@ namespace switter_client
                         button_connect.Enabled = false;
 
                     }
-                    else if(incomingMessage != "")
+                    else if(incomingMessage != "")  // If incoming message is not empty
                     {
                         logs.AppendText("Server: " + incomingMessage + "\n");
                     }
@@ -146,12 +147,6 @@ namespace switter_client
             }
         }
 
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-        }
-
         private void button_disconnect_Click(object sender, EventArgs e)
         {
             try
@@ -178,7 +173,7 @@ namespace switter_client
            
         }
 
-        private void button_request_Click(object sender, EventArgs e)
+        private void button_request_Click(object sender, EventArgs e)       // Request all sweets button
         {
             logs.AppendText("Requested all sweets from the server\n");
             Byte[] buffer = Encoding.Default.GetBytes("request");
