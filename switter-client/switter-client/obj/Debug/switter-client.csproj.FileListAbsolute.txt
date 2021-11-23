@@ -7,3 +7,6 @@ E:\3.JuniorYear_2021_2022\CS408-L-A\project\Switter\switter-client\switter-clien
 E:\3.JuniorYear_2021_2022\CS408-L-A\project\Switter\switter-client\switter-client\bin\Debug\switter-client.pdb
 E:\3.JuniorYear_2021_2022\CS408-L-A\project\Switter\switter-client\switter-client\obj\Debug\switter-client.exe
 E:\3.JuniorYear_2021_2022\CS408-L-A\project\Switter\switter-client\switter-client\obj\Debug\switter-client.pdb
+C:\Users\EGE METIN\Documents\Visual Studio 2015\Projects\Switter\switter-client\switter-client\bin\Debug\switter-client.exe.config
+C:\Users\EGE METIN\Documents\Visual Studio 2015\Projects\Switter\switter-client\switter-client\obj\Debug\switter-client.exe
+C:\Users\EGE METIN\Documents\Visual Studio 2015\Projects\Switter\switter-client\switter-client\obj\Debug\switter-client.pdb

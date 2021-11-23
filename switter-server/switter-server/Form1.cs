@@ -16,7 +16,7 @@ namespace switter_server
 {
     public partial class Form1 : Form
     {
-        bool terminating = false;
+        bool terminating = false;   // deneme
         bool listening = false;
         List<string> users;
         List<string> connectedUsers = new List<string>();

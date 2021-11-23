@@ -16,3 +16,6 @@ E:\3.JuniorYear_2021_2022\CS408-L-A\project\Switter\switter-server\switter-serve
 E:\3.JuniorYear_2021_2022\CS408-L-A\project\Switter\switter-server\switter-server\obj\Debug\switter_server.Form1.resources
 E:\3.JuniorYear_2021_2022\CS408-L-A\project\Switter\switter-server\switter-server\obj\Debug\switter_server.Properties.Resources.resources
 E:\3.JuniorYear_2021_2022\CS408-L-A\project\Switter\switter-server\switter-server\obj\Debug\switter-server.csproj.GenerateResource.Cache
+C:\Users\EGE METIN\Documents\Visual Studio 2015\Projects\Switter\switter-server\switter-server\bin\Debug\switter-server.exe.config
+C:\Users\EGE METIN\Documents\Visual Studio 2015\Projects\Switter\switter-server\switter-server\obj\Debug\switter-server.exe
+C:\Users\EGE METIN\Documents\Visual Studio 2015\Projects\Switter\switter-server\switter-server\obj\Debug\switter-server.pdb
