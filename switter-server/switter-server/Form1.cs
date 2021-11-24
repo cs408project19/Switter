@@ -52,6 +52,7 @@ namespace switter_server
             return false;
         }
 
+        // server is initialized
         private void button_start_Click(object sender, EventArgs e)
         {
             readUserFile();
@@ -59,6 +60,7 @@ namespace switter_server
 
             int serverPort;
 
+            // if port is fine
             if (Int32.TryParse(textbox_port.Text, out serverPort))
             {
                 IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, serverPort);
@@ -68,6 +70,7 @@ namespace switter_server
                 listening = true;
                 button_start.Enabled = false;
 
+                // started to accepting users
                 Thread acceptThread = new Thread(Accept);
                 acceptThread.Start();
 
@@ -80,12 +83,15 @@ namespace switter_server
             }
         }
 
+
+        // listening for users (clients)
         private void Accept()
         {
             while (listening)
             {
                 try
                 {
+                    // if new user is came
                     Socket newClient = serverSocket.Accept();
                     clientSockets.Add(newClient);
 
@@ -109,6 +115,7 @@ namespace switter_server
                         }
                         else            
                         {
+                            // if user is not logged in and logged successfully now
                             connectedUsers.Add(username);
                             richtextbox_log.AppendText(username + " connected!\n");
                             Byte[] sweetsBuffer = Encoding.Default.GetBytes("Connected successfully");
@@ -119,6 +126,7 @@ namespace switter_server
                     }
                     else        
                     {
+                        // if user does not exist in the database
                         richtextbox_log.AppendText("User does not exist!\n");
                         Byte[] sweetsBuffer = Encoding.Default.GetBytes("This user does not exist");
                         newClient.Send(sweetsBuffer);
@@ -142,7 +150,7 @@ namespace switter_server
                 }
             }
         }
-
+        // adding new sweet to database
         void AddSweet(string sweet)
         {
             sweets.Add(sweet);
@@ -150,6 +158,7 @@ namespace switter_server
             File.WriteAllLines("sweets.txt", sweets);
         }
 
+        // listening for new commands from users
         private void Receive(Socket thisClient, string user) // updated
         {
             bool connected = true;
@@ -180,6 +189,7 @@ namespace switter_server
                         Byte[] sweetsBuffer = Encoding.Default.GetBytes(allSweets);
                         thisClient.Send(sweetsBuffer);
                     }
+                    // if user sends disconnect command, removes from connectedUsers
                     else if(incomingMessage == "disconnect")
                     {
                         thisClient.Close();
@@ -190,6 +200,7 @@ namespace switter_server
 
                     else
                     {
+                        // putting new sweet to correct form and adds to database
                         if(incomingMessage.Split(';').Length >= 2) { 
                             user = incomingMessage.Split(';')[0];
                             string msg = incomingMessage.Split(';')[1];
@@ -215,6 +226,7 @@ namespace switter_server
                 }
                 catch
                 {
+                    // if user disconnects by closing the program without clicking disconnect
                     if (!terminating)
                     {
                         richtextbox_log.AppendText(user + " has disconnected\n");

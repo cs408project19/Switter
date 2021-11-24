@@ -26,7 +26,7 @@ namespace switter_client
             this.FormClosing += new FormClosingEventHandler(Form1_FormClosing);
             InitializeComponent();
         }
-
+        // After input username, port and ip, connecting to server
         private void button_connect_Click(object sender, EventArgs e)
         {
             clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -45,6 +45,7 @@ namespace switter_client
 
                 try
                 {
+                    // trying to connect to server
                     clientSocket.Connect(IP, portNum);
                     button_connect.Enabled = false;
                     button_send.Enabled = true;
@@ -56,6 +57,7 @@ namespace switter_client
 
                     Console.WriteLine("sent username");
 
+                    // connected and started to listen server
                     Thread receiveThread = new Thread(Receive);
                     receiveThread.Start();
 
@@ -71,19 +73,23 @@ namespace switter_client
             }
 
         }
-
+        // Receives messages from the server
         private void Receive()
         {
             while (connected)
             {
                 try
                 {
+                    // buffer saves incoming messages as bytes
                     Byte[] buffer = new Byte[4096];
                     clientSocket.Receive(buffer);
+                    
 
+                    // bytes to string incoming message
                     string incomingMessage = Encoding.Default.GetString(buffer);
                     incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
 
+                    // if login is failed
                     if (incomingMessage.Equals("This user does not exist") || incomingMessage.Equals("This user is already connected"))
                     {   // If the user is not in the server's userlist or already connected to the server
 
@@ -94,7 +100,9 @@ namespace switter_client
                         textBox_message.Enabled = false;
                         button_send.Enabled = false;
 
-                    } else if (incomingMessage.Equals("Connected successfully")){
+                    } 
+                    // if login successful, fix the buttons and continue listening
+                    else if (incomingMessage.Equals("Connected successfully")){
                         logs.AppendText("Server: " + incomingMessage + "\n");
                         button_disconnect.Enabled = true;
                         textBox_message.Enabled = true;
@@ -109,6 +117,7 @@ namespace switter_client
                 }
                 catch
                 {
+                    // any problem with server
                     if (!terminating)
                     {
                         logs.AppendText("The server has disconnected\n");
@@ -134,11 +143,12 @@ namespace switter_client
         }
 
       
-
+        // posting sweet to server
         private void button_send_Click(object sender, EventArgs e)
         {
             string message = username + ";" + textBox_message.Text;
 
+            // checks message
             if (message != "")
             {
                 Byte[] buffer = Encoding.Default.GetBytes(message);
@@ -147,10 +157,12 @@ namespace switter_client
             }
         }
 
+        // disconnect from the server as logged in user
         private void button_disconnect_Click(object sender, EventArgs e)
         {
             try
             {
+                // sending the disconnect request
                 Byte[] buffer = Encoding.Default.GetBytes("disconnect");
                 clientSocket.Send(buffer);
                 
@@ -161,6 +173,7 @@ namespace switter_client
             }
             finally
             {
+                // disconnects and fixes the button's enableness
                 logs.AppendText("Disconnected from the server\n");
                 connected = false;
                 button_connect.Enabled = true;
@@ -172,8 +185,8 @@ namespace switter_client
             }
            
         }
-
-        private void button_request_Click(object sender, EventArgs e)       // Request all sweets button
+        // requesting all the sweets from the server
+        private void button_request_Click(object sender, EventArgs e)
         {
             logs.AppendText("Requested all sweets from the server\n");
             Byte[] buffer = Encoding.Default.GetBytes("request");
