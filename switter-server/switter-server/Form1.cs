@@ -35,10 +35,12 @@ namespace switter_server
             users = File.ReadAllLines("../../user-db.txt").ToList<string>();
 
             // Load previously saved sweets from txt file
-            if (File.Exists("sweets.txt"))
+            if (!File.Exists("sweets.txt"))
+            {
+                FileStream fs = File.OpenWrite("sweets.txt");
+                fs.Close();
+            }
                 sweets = File.ReadAllLines("sweets.txt").ToList<string>();
-            else 
-                File.Create("sweets.txt");
         }
 
         // initialize the server

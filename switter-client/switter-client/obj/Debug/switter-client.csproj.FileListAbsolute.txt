@@ -1,22 +1,9 @@
-E:\3.JuniorYear_2021_2022\CS408-L-A\project\Switter\switter-client\switter-client\bin\Debug\switter-client.exe.config
-E:\3.JuniorYear_2021_2022\CS408-L-A\project\Switter\switter-client\switter-client\obj\Debug\switter-client.csprojResolveAssemblyReference.cache
-E:\3.JuniorYear_2021_2022\CS408-L-A\project\Switter\switter-client\switter-client\obj\Debug\switter_client.Form1.resources
-E:\3.JuniorYear_2021_2022\CS408-L-A\project\Switter\switter-client\switter-client\obj\Debug\switter_client.Properties.Resources.resources
-E:\3.JuniorYear_2021_2022\CS408-L-A\project\Switter\switter-client\switter-client\obj\Debug\switter-client.csproj.GenerateResource.Cache
-E:\3.JuniorYear_2021_2022\CS408-L-A\project\Switter\switter-client\switter-client\bin\Debug\switter-client.exe
-E:\3.JuniorYear_2021_2022\CS408-L-A\project\Switter\switter-client\switter-client\bin\Debug\switter-client.pdb
-E:\3.JuniorYear_2021_2022\CS408-L-A\project\Switter\switter-client\switter-client\obj\Debug\switter-client.exe
-E:\3.JuniorYear_2021_2022\CS408-L-A\project\Switter\switter-client\switter-client\obj\Debug\switter-client.pdb
-C:\Users\EGE METIN\Documents\Visual Studio 2015\Projects\Switter\switter-client\switter-client\bin\Debug\switter-client.exe.config
-C:\Users\EGE METIN\Documents\Visual Studio 2015\Projects\Switter\switter-client\switter-client\obj\Debug\switter-client.exe
-C:\Users\EGE METIN\Documents\Visual Studio 2015\Projects\Switter\switter-client\switter-client\obj\Debug\switter-client.pdb
-D:\Projects\csharp\Switter\switter-client\switter-client\bin\Debug\switter-client.exe.config
-D:\Projects\csharp\Switter\switter-client\switter-client\bin\Debug\switter-client.exe
-D:\Projects\csharp\Switter\switter-client\switter-client\bin\Debug\switter-client.pdb
-D:\Projects\csharp\Switter\switter-client\switter-client\obj\Debug\switter-client.csproj.AssemblyReference.cache
-D:\Projects\csharp\Switter\switter-client\switter-client\obj\Debug\switter_client.Form1.resources
-D:\Projects\csharp\Switter\switter-client\switter-client\obj\Debug\switter_client.Properties.Resources.resources
-D:\Projects\csharp\Switter\switter-client\switter-client\obj\Debug\switter-client.csproj.GenerateResource.cache
-D:\Projects\csharp\Switter\switter-client\switter-client\obj\Debug\switter-client.csproj.CoreCompileInputs.cache
-D:\Projects\csharp\Switter\switter-client\switter-client\obj\Debug\switter-client.exe
-D:\Projects\csharp\Switter\switter-client\switter-client\obj\Debug\switter-client.pdb
+D:\Projects\Switter\switter-client\switter-client\bin\Debug\switter-client.exe.config
+D:\Projects\Switter\switter-client\switter-client\bin\Debug\switter-client.exe
+D:\Projects\Switter\switter-client\switter-client\bin\Debug\switter-client.pdb
+D:\Projects\Switter\switter-client\switter-client\obj\Debug\switter_client.Form1.resources
+D:\Projects\Switter\switter-client\switter-client\obj\Debug\switter_client.Properties.Resources.resources
+D:\Projects\Switter\switter-client\switter-client\obj\Debug\switter-client.csproj.GenerateResource.cache
+D:\Projects\Switter\switter-client\switter-client\obj\Debug\switter-client.csproj.CoreCompileInputs.cache
+D:\Projects\Switter\switter-client\switter-client\obj\Debug\switter-client.exe
+D:\Projects\Switter\switter-client\switter-client\obj\Debug\switter-client.pdb
