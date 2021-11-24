@@ -154,6 +154,7 @@ namespace switter_client
                 Byte[] buffer = Encoding.Default.GetBytes(message);
                 clientSocket.Send(buffer);
                 textBox_message.Text = "";
+                logs.AppendText("Me: " + message.Substring(message.IndexOf(";") + 1) + "\n");
             }
         }
 
