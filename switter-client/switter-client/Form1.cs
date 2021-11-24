@@ -90,7 +90,7 @@ namespace switter_client
                     incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
 
                     // if login is failed
-                    if (incomingMessage.Equals("This user does not exist") || incomingMessage.Equals("This user is already connected"))
+                    if (incomingMessage.Equals("This user does not exist.") || incomingMessage.Equals("This user is already connected."))
                     {   // If the user is not in the server's userlist or already connected to the server
 
                         logs.AppendText("Server: " + incomingMessage + "\n");
@@ -120,7 +120,7 @@ namespace switter_client
                     // any problem with server
                     if (!terminating)
                     {
-                        logs.AppendText("The server has disconnected\n");
+                        logs.AppendText("The server has disconnected.\n");
                         button_connect.Enabled = true;
                         textBox_message.Enabled = false;
                         button_send.Enabled = false;

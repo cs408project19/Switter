@@ -116,7 +116,7 @@ namespace switter_server
                     {
                         // if user does not exist in the database
                         richtextbox_log.AppendText("User does not exist!\n");
-                        Byte[] sweetsBuffer = Encoding.Default.GetBytes("This user does not exist");
+                        Byte[] sweetsBuffer = Encoding.Default.GetBytes("This user does not exist.");
                         newClient.Send(sweetsBuffer);
                         newClient.Close();
                         clientSockets.Remove(newClient);
