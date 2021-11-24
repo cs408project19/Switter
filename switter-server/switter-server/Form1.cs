@@ -32,7 +32,7 @@ namespace switter_server
             InitializeComponent();
 
             // Add all users in txt to users list
-            users = File.ReadAllLines("user-db.txt").ToList<string>();
+            users = File.ReadAllLines("../../user-db.txt").ToList<string>();
 
             // Load previously saved sweets from txt file
             if (File.Exists("sweets.txt"))
@@ -202,6 +202,7 @@ namespace switter_server
                         connectedUsers.Remove(user);
                         clientSockets.Remove(thisClient);
                         connected = false;
+                        richtextbox_log.AppendText(user + " disconnected\n");
                     }
 
                     else

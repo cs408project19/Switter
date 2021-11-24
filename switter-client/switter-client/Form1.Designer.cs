@@ -187,7 +187,7 @@
             this.Controls.Add(this.textBox_port);
             this.Controls.Add(this.textBox_ip);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Switter-Client";
             this.ResumeLayout(false);
             this.PerformLayout();
 
