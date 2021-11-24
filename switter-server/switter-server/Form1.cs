@@ -144,7 +144,7 @@ namespace switter_server
         {
             sweets.Add(sweet);
 
-            File.WriteAllLines("sweets.txt", sweets);
+            File.AppendAllText("sweets.txt", sweet + "\n");
         }
 
         public DateTime UnixTimeToDateTime(long unixtime)
