@@ -64,12 +64,12 @@ namespace switter_client
                 }
                 catch
                 {
-                    logs.AppendText("Could not connect to the server!\r\n");
+                    logs.AppendText("Could not connect to the server.\r\n");
                 }
             }
             else
             {
-                logs.AppendText("Check the port and IP number\n");
+                logs.AppendText("Check the port and IP number.\n");
             }
 
         }

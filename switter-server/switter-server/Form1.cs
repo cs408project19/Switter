@@ -158,7 +158,7 @@ namespace switter_server
         {
             string formattedSweet = "[" + UnixTimeToDateTime(long.Parse(sw.Split(';')[1])) + "] ";
             formattedSweet += sw.Split(';')[2] + ": ";
-            formattedSweet += sw.Substring(sw.IndexOf(';', sw.IndexOf(';', sw.IndexOf(';') + 1) + 1) + 2);
+            formattedSweet += sw.Substring(sw.IndexOf(';', sw.IndexOf(';', sw.IndexOf(';') + 1) + 1) + 1);
             return formattedSweet;
         }
 
@@ -208,7 +208,7 @@ namespace switter_server
                         // putting new sweet to correct form and adds to database
                         if (incomingMessage.Split(';').Length >= 2)
                         {
-                            string msg = incomingMessage.Substring(incomingMessage.IndexOf(';'));
+                            string msg = incomingMessage.Substring(incomingMessage.IndexOf(';') + 1);
 
                             string sweetID = (sweets.Count + 1).ToString();
                             string sweetTime = ((long)DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalSeconds).ToString();
