@@ -156,7 +156,8 @@ namespace switter_server
 
         string formatSweet(string sw)
         {
-            string formattedSweet = "[" + UnixTimeToDateTime(long.Parse(sw.Split(';')[1])) + "] ";
+            string formattedSweet = "[" + sw.Split(';')[0] + "] ";
+            formattedSweet += "[" + UnixTimeToDateTime(long.Parse(sw.Split(';')[1])) + "] ";
             formattedSweet += sw.Split(';')[2] + ": ";
             formattedSweet += sw.Substring(sw.IndexOf(';', sw.IndexOf(';', sw.IndexOf(';') + 1) + 1) + 1);
             return formattedSweet;
