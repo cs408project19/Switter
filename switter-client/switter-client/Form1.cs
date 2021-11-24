@@ -102,7 +102,7 @@ namespace switter_client
 
                     } 
                     // if login successful, fix the buttons and continue listening
-                    else if (incomingMessage.Equals("Connected successfully")){
+                    else if (incomingMessage.Equals("Connected successfully.")){
                         logs.AppendText("Server: " + incomingMessage + "\n");
                         button_disconnect.Enabled = true;
                         textBox_message.Enabled = true;

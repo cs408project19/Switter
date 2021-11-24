@@ -30,34 +30,20 @@ namespace switter_server
             Control.CheckForIllegalCrossThreadCalls = false;
             this.FormClosing += new FormClosingEventHandler(Form1_FormClosing);
             InitializeComponent();
-        }
 
-        void readUserFile()         // Add all users in txt to users list
-        {
+            // Add all users in txt to users list
             users = File.ReadAllLines("user-db.txt").ToList<string>();
+
+            // Load previously saved sweets from txt file
+            if (File.Exists("sweets.txt"))
+                sweets = File.ReadAllLines("sweets.txt").ToList<string>();
+            else 
+                File.Create("sweets.txt");
         }
 
-        void readSweetsFile()       // When all sweets options called, we read this txt file and print it
-        {
-            sweets = File.ReadAllLines("sweets.txt").ToList<string>();
-        }
-
-        bool userExist(string username)         // Search if this user is in users list
-        {
-            foreach(string u in users)
-            {
-                if (u == username)
-                    return true;
-            }
-            return false;
-        }
-
-        // server is initialized
+        // initialize the server
         private void button_start_Click(object sender, EventArgs e)
         {
-            readUserFile();
-            readSweetsFile();
-
             int serverPort;
 
             // if port is fine
@@ -79,7 +65,7 @@ namespace switter_server
             }
             else
             {
-                richtextbox_log.AppendText("Please check port number \n");
+                richtextbox_log.AppendText("Please check port number. \n");
             }
         }
 
@@ -95,20 +81,22 @@ namespace switter_server
                     Socket newClient = serverSocket.Accept();
                     clientSockets.Add(newClient);
 
+
+                    // get the username as a message first
                     Byte[] buffer = new Byte[128];
                     newClient.Receive(buffer);
                     string incomingMessage = Encoding.Default.GetString(buffer);
                     string username = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
 
 
-                    richtextbox_log.AppendText(username + " is trying to connect\n");
+                    richtextbox_log.AppendText(username + " is trying to connect.\n");
 
-                    if (userExist(username))        // If the username exists in the users list
+                    if (users.IndexOf(username) != -1)        // If the username exists in the users list
                     {
                         if (connectedUsers.Exists(x => x.Equals(username)))     // If the same username tries to connect
                         {   
-                            richtextbox_log.AppendText("User already connected!\n");
-                            Byte[] sweetsBuffer = Encoding.Default.GetBytes("This user is already connected");
+                            richtextbox_log.AppendText("User is already connected.\n");
+                            Byte[] sweetsBuffer = Encoding.Default.GetBytes("This user is already connected.");
                             newClient.Send(sweetsBuffer);
                             newClient.Close();
                             clientSockets.Remove(newClient);
@@ -117,8 +105,8 @@ namespace switter_server
                         {
                             // if user is not logged in and logged successfully now
                             connectedUsers.Add(username);
-                            richtextbox_log.AppendText(username + " connected!\n");
-                            Byte[] sweetsBuffer = Encoding.Default.GetBytes("Connected successfully");
+                            richtextbox_log.AppendText(username + " connected.\n");
+                            Byte[] sweetsBuffer = Encoding.Default.GetBytes("Connected successfully.");
                             newClient.Send(sweetsBuffer);
                             Thread receiveThread = new Thread(() => Receive(newClient, username)); // updated
                             receiveThread.Start();
@@ -150,12 +138,38 @@ namespace switter_server
                 }
             }
         }
+        
         // adding new sweet to database
         void AddSweet(string sweet)
         {
             sweets.Add(sweet);
 
             File.WriteAllLines("sweets.txt", sweets);
+        }
+
+        public DateTime UnixTimeToDateTime(long unixtime)
+        {
+            DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+            dtDateTime = dtDateTime.AddSeconds(unixtime).ToLocalTime();
+            return dtDateTime;
+        }
+
+        string formatSweet(string sw)
+        {
+            string formattedSweet = "[" + UnixTimeToDateTime(long.Parse(sw.Split(';')[1])) + "] ";
+            formattedSweet += sw.Split(';')[2] + ": ";
+            formattedSweet += sw.Substring(sw.IndexOf(';', sw.IndexOf(';', sw.IndexOf(';') + 1) + 1) + 2);
+            return formattedSweet;
+        }
+
+        string getAllSweets(string user)
+        {
+            string s = "";
+            foreach (string sweet in sweets)        // Accumulate all sweets in one string
+                if (sweet.Split(';')[2] != user)
+                    s += formatSweet(sweet) + "\n";
+            s = s == "" ? "No sweets found.\n" : "Here is all tweets: \n" + s; 
+            return s;
         }
 
         // listening for new commands from users
@@ -175,18 +189,9 @@ namespace switter_server
 
                     if (incomingMessage == "request")       // if "request" message comes from client(user), print all the sweets except user's sweets
                     {
-                        string allSweets = "";
-                        foreach(string sweet in sweets)        // Accumulate all sweets in one string
-                        {
-                            if (sweet.Split(';')[0] != user)
-                            {
-                                allSweets += sweet + "\n";
-                            }
-                        }
-
                         richtextbox_log.AppendText(user +" requested all sweets.\n");
 
-                        Byte[] sweetsBuffer = Encoding.Default.GetBytes(allSweets);
+                        Byte[] sweetsBuffer = Encoding.Default.GetBytes(getAllSweets(user));
                         thisClient.Send(sweetsBuffer);
                     }
                     // if user sends disconnect command, removes from connectedUsers
@@ -201,26 +206,21 @@ namespace switter_server
                     else
                     {
                         // putting new sweet to correct form and adds to database
-                        if(incomingMessage.Split(';').Length >= 2) { 
-                            user = incomingMessage.Split(';')[0];
-                            string msg = incomingMessage.Split(';')[1];
-
-                            if (userExist(user))
-                            {
-                                string sweet = user + ";" + msg + ";" + DateTime.Now.ToUniversalTime().ToString() + ";" + (sweets.Count + 1).ToString();
-                                AddSweet(sweet);
-                                richtextbox_log.AppendText(sweet + "\n");
-                            }
-                            else
-                            {
-                                richtextbox_log.AppendText("Invalid username!\n");
-                            }
-                        }
-
-                        else
+                        if (incomingMessage.Split(';').Length >= 2)
                         {
-                            richtextbox_log.AppendText("Invalid message!\n");
+                            string msg = incomingMessage.Substring(incomingMessage.IndexOf(';'));
+
+                            string sweetID = (sweets.Count + 1).ToString();
+                            string sweetTime = ((long)DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalSeconds).ToString();
+                            string sweet = sweetID + ";" + sweetTime + ";" + user + ";" + msg;
+                            AddSweet(sweet);
+                            richtextbox_log.AppendText(formatSweet(sweet) + "\n");
+                            
+                            Byte[] sweetsBuffer = Encoding.Default.GetBytes("Message received.\n");
+                            thisClient.Send(sweetsBuffer);
                         }
+                        else
+                            richtextbox_log.AppendText("Invalid message!\n");
                     }
 
                 }

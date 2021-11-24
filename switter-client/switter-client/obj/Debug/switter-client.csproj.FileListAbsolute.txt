@@ -10,3 +10,13 @@ E:\3.JuniorYear_2021_2022\CS408-L-A\project\Switter\switter-client\switter-clien
 C:\Users\EGE METIN\Documents\Visual Studio 2015\Projects\Switter\switter-client\switter-client\bin\Debug\switter-client.exe.config
 C:\Users\EGE METIN\Documents\Visual Studio 2015\Projects\Switter\switter-client\switter-client\obj\Debug\switter-client.exe
 C:\Users\EGE METIN\Documents\Visual Studio 2015\Projects\Switter\switter-client\switter-client\obj\Debug\switter-client.pdb
+D:\Projects\csharp\Switter\switter-client\switter-client\bin\Debug\switter-client.exe.config
+D:\Projects\csharp\Switter\switter-client\switter-client\bin\Debug\switter-client.exe
+D:\Projects\csharp\Switter\switter-client\switter-client\bin\Debug\switter-client.pdb
+D:\Projects\csharp\Switter\switter-client\switter-client\obj\Debug\switter-client.csproj.AssemblyReference.cache
+D:\Projects\csharp\Switter\switter-client\switter-client\obj\Debug\switter_client.Form1.resources
+D:\Projects\csharp\Switter\switter-client\switter-client\obj\Debug\switter_client.Properties.Resources.resources
+D:\Projects\csharp\Switter\switter-client\switter-client\obj\Debug\switter-client.csproj.GenerateResource.cache
+D:\Projects\csharp\Switter\switter-client\switter-client\obj\Debug\switter-client.csproj.CoreCompileInputs.cache
+D:\Projects\csharp\Switter\switter-client\switter-client\obj\Debug\switter-client.exe
+D:\Projects\csharp\Switter\switter-client\switter-client\obj\Debug\switter-client.pdb
