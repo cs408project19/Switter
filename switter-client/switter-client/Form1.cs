@@ -99,7 +99,8 @@ namespace switter_client
                         button_connect.Enabled = true;
                         textBox_message.Enabled = false;
                         button_send.Enabled = false;
-
+                        textBox_follow.Enabled = false;
+                        button_follow.Enabled = false;
                     } 
                     // if login successful, fix the buttons and continue listening
                     else if (incomingMessage.Equals("Connected successfully.")){
