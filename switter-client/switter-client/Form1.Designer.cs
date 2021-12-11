@@ -40,8 +40,8 @@
             this.textBox_username = new System.Windows.Forms.TextBox();
             this.label_username = new System.Windows.Forms.Label();
             this.button_disconnect = new System.Windows.Forms.Button();
-            this.button_request = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.button_requestFollowing = new System.Windows.Forms.Button();
+            this.textBox_follow = new System.Windows.Forms.TextBox();
             this.button_follow = new System.Windows.Forms.Button();
             this.button_getAllSweets = new System.Windows.Forms.Button();
             this.SuspendLayout();
@@ -160,25 +160,25 @@
             this.button_disconnect.UseVisualStyleBackColor = true;
             this.button_disconnect.Click += new System.EventHandler(this.button_disconnect_Click);
             // 
-            // button_request
+            // button_requestFollowing
             // 
-            this.button_request.Enabled = false;
-            this.button_request.Location = new System.Drawing.Point(5, 356);
-            this.button_request.Name = "button_request";
-            this.button_request.Size = new System.Drawing.Size(124, 26);
-            this.button_request.TabIndex = 15;
-            this.button_request.Text = "Get Followings\' Sweets";
-            this.button_request.UseVisualStyleBackColor = true;
-            this.button_request.Click += new System.EventHandler(this.button_request_Click);
+            this.button_requestFollowing.Enabled = false;
+            this.button_requestFollowing.Location = new System.Drawing.Point(5, 356);
+            this.button_requestFollowing.Name = "button_requestFollowing";
+            this.button_requestFollowing.Size = new System.Drawing.Size(124, 26);
+            this.button_requestFollowing.TabIndex = 15;
+            this.button_requestFollowing.Text = "Get Followings\' Sweets";
+            this.button_requestFollowing.UseVisualStyleBackColor = true;
+            this.button_requestFollowing.Click += new System.EventHandler(this.button_requestFollowing_Click);
             // 
-            // textBox1
+            // textBox_follow
             // 
-            this.textBox1.Enabled = false;
-            this.textBox1.Location = new System.Drawing.Point(69, 322);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(2);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(98, 20);
-            this.textBox1.TabIndex = 16;
+            this.textBox_follow.Enabled = false;
+            this.textBox_follow.Location = new System.Drawing.Point(69, 322);
+            this.textBox_follow.Margin = new System.Windows.Forms.Padding(2);
+            this.textBox_follow.Name = "textBox_follow";
+            this.textBox_follow.Size = new System.Drawing.Size(98, 20);
+            this.textBox_follow.TabIndex = 16;
             // 
             // button_follow
             // 
@@ -210,8 +210,8 @@
             this.ClientSize = new System.Drawing.Size(648, 476);
             this.Controls.Add(this.button_getAllSweets);
             this.Controls.Add(this.button_follow);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.button_request);
+            this.Controls.Add(this.textBox_follow);
+            this.Controls.Add(this.button_requestFollowing);
             this.Controls.Add(this.button_disconnect);
             this.Controls.Add(this.label_username);
             this.Controls.Add(this.textBox_username);
@@ -245,8 +245,8 @@
         private System.Windows.Forms.TextBox textBox_username;
         private System.Windows.Forms.Label label_username;
         private System.Windows.Forms.Button button_disconnect;
-        private System.Windows.Forms.Button button_request;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Button button_requestFollowing;
+        private System.Windows.Forms.TextBox textBox_follow;
         private System.Windows.Forms.Button button_follow;
         private System.Windows.Forms.Button button_getAllSweets;
     }

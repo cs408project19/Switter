@@ -106,9 +106,9 @@ namespace switter_client
                         logs.AppendText("Server: " + incomingMessage + "\n");
                         button_disconnect.Enabled = true;
                         textBox_message.Enabled = true;
-                        textBox1.Enabled = true;
+                        textBox_follow.Enabled = true;
                         button_follow.Enabled = true;
-                        button_request.Enabled = true;
+                        button_requestFollowing.Enabled = true;
                         button_getAllSweets.Enabled = true;
                         button_connect.Enabled = false;
 
@@ -127,7 +127,7 @@ namespace switter_client
                         button_connect.Enabled = true;
                         textBox_message.Enabled = false;
                         button_send.Enabled = false;
-                        button_request.Enabled = false;
+                        button_requestFollowing.Enabled = false;
                         button_disconnect.Enabled = false;
                     }
 
@@ -182,18 +182,18 @@ namespace switter_client
                 connected = false;
                 button_connect.Enabled = true;
                 textBox_message.Enabled = false;
-                textBox1.Enabled = false;
+                textBox_follow.Enabled = false;
                 button_send.Enabled = false;
                 button_follow.Enabled = false;
                 button_disconnect.Enabled = false;
-                button_request.Enabled = false;
+                button_requestFollowing.Enabled = false;
                 button_getAllSweets.Enabled = false;
                 clientSocket.Close();
             }
            
         }
         // requesting all the sweets from the server
-        private void button_request_Click(object sender, EventArgs e)
+        private void button_requestFollowing_Click(object sender, EventArgs e)
         {
             logs.AppendText("Requested followings' sweets from the server\n");
             Byte[] buffer = Encoding.Default.GetBytes("requestFollowingSweets");
@@ -203,8 +203,9 @@ namespace switter_client
 
         private void button_follow_Click(object sender, EventArgs e)
         {
-            Byte[] buffer = Encoding.Default.GetBytes("follow:" + textBox1.Text);
+            Byte[] buffer = Encoding.Default.GetBytes("follow:" + textBox_follow.Text);
             clientSocket.Send(buffer);
+            textBox_follow.Text = "";
         }
 
         private void button_getAllSweets_Click(object sender, EventArgs e)
