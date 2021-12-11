@@ -106,7 +106,10 @@ namespace switter_client
                         logs.AppendText("Server: " + incomingMessage + "\n");
                         button_disconnect.Enabled = true;
                         textBox_message.Enabled = true;
+                        textBox1.Enabled = true;
+                        button_follow.Enabled = true;
                         button_request.Enabled = true;
+                        button_getAllSweets.Enabled = true;
                         button_connect.Enabled = false;
 
                     }
@@ -179,9 +182,12 @@ namespace switter_client
                 connected = false;
                 button_connect.Enabled = true;
                 textBox_message.Enabled = false;
+                textBox1.Enabled = false;
                 button_send.Enabled = false;
+                button_follow.Enabled = false;
                 button_disconnect.Enabled = false;
                 button_request.Enabled = false;
+                button_getAllSweets.Enabled = false;
                 clientSocket.Close();
             }
            
@@ -189,10 +195,23 @@ namespace switter_client
         // requesting all the sweets from the server
         private void button_request_Click(object sender, EventArgs e)
         {
+            logs.AppendText("Requested followings' sweets from the server\n");
+            Byte[] buffer = Encoding.Default.GetBytes("requestFollowingSweets");
+            clientSocket.Send(buffer);
+
+        }
+
+        private void button_follow_Click(object sender, EventArgs e)
+        {
+            Byte[] buffer = Encoding.Default.GetBytes("follow:" + textBox1.Text);
+            clientSocket.Send(buffer);
+        }
+
+        private void button_getAllSweets_Click(object sender, EventArgs e)
+        {
             logs.AppendText("Requested all sweets from the server\n");
             Byte[] buffer = Encoding.Default.GetBytes("request");
             clientSocket.Send(buffer);
-
         }
     }
 }

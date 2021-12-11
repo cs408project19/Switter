@@ -7,3 +7,4 @@ D:\Projects\Switter\switter-client\switter-client\obj\Debug\switter-client.cspro
 D:\Projects\Switter\switter-client\switter-client\obj\Debug\switter-client.csproj.CoreCompileInputs.cache
 D:\Projects\Switter\switter-client\switter-client\obj\Debug\switter-client.exe
 D:\Projects\Switter\switter-client\switter-client\obj\Debug\switter-client.pdb
+D:\Projects\Switter\switter-client\switter-client\obj\Debug\switter-client.csproj.AssemblyReference.cache
