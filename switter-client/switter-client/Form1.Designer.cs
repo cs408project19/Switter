@@ -44,6 +44,7 @@
             this.textBox_follow = new System.Windows.Forms.TextBox();
             this.button_follow = new System.Windows.Forms.Button();
             this.button_getAllSweets = new System.Windows.Forms.Button();
+            this.button_getUsers = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // textBox_ip
@@ -95,10 +96,10 @@
             // 
             // logs
             // 
-            this.logs.Location = new System.Drawing.Point(297, 28);
+            this.logs.Location = new System.Drawing.Point(313, 27);
             this.logs.Margin = new System.Windows.Forms.Padding(2);
             this.logs.Name = "logs";
-            this.logs.Size = new System.Drawing.Size(315, 294);
+            this.logs.Size = new System.Drawing.Size(363, 294);
             this.logs.TabIndex = 8;
             this.logs.Text = "";
             // 
@@ -165,9 +166,9 @@
             this.button_requestFollowing.Enabled = false;
             this.button_requestFollowing.Location = new System.Drawing.Point(5, 356);
             this.button_requestFollowing.Name = "button_requestFollowing";
-            this.button_requestFollowing.Size = new System.Drawing.Size(124, 26);
+            this.button_requestFollowing.Size = new System.Drawing.Size(109, 26);
             this.button_requestFollowing.TabIndex = 15;
-            this.button_requestFollowing.Text = "Get Followings\' Sweets";
+            this.button_requestFollowing.Text = "Followings\' Sweets";
             this.button_requestFollowing.UseVisualStyleBackColor = true;
             this.button_requestFollowing.Click += new System.EventHandler(this.button_requestFollowing_Click);
             // 
@@ -195,19 +196,31 @@
             // button_getAllSweets
             // 
             this.button_getAllSweets.Enabled = false;
-            this.button_getAllSweets.Location = new System.Drawing.Point(135, 356);
+            this.button_getAllSweets.Location = new System.Drawing.Point(120, 356);
             this.button_getAllSweets.Name = "button_getAllSweets";
-            this.button_getAllSweets.Size = new System.Drawing.Size(114, 26);
+            this.button_getAllSweets.Size = new System.Drawing.Size(91, 26);
             this.button_getAllSweets.TabIndex = 18;
-            this.button_getAllSweets.Text = "Get All Sweets";
+            this.button_getAllSweets.Text = "All Sweets";
             this.button_getAllSweets.UseVisualStyleBackColor = true;
             this.button_getAllSweets.Click += new System.EventHandler(this.button_getAllSweets_Click);
+            // 
+            // button_getUsers
+            // 
+            this.button_getUsers.Enabled = false;
+            this.button_getUsers.Location = new System.Drawing.Point(217, 356);
+            this.button_getUsers.Name = "button_getUsers";
+            this.button_getUsers.Size = new System.Drawing.Size(91, 26);
+            this.button_getUsers.TabIndex = 19;
+            this.button_getUsers.Text = "All Users";
+            this.button_getUsers.UseVisualStyleBackColor = true;
+            this.button_getUsers.Click += new System.EventHandler(this.button_getUsers_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(648, 476);
+            this.ClientSize = new System.Drawing.Size(687, 476);
+            this.Controls.Add(this.button_getUsers);
             this.Controls.Add(this.button_getAllSweets);
             this.Controls.Add(this.button_follow);
             this.Controls.Add(this.textBox_follow);
@@ -249,6 +262,7 @@
         private System.Windows.Forms.TextBox textBox_follow;
         private System.Windows.Forms.Button button_follow;
         private System.Windows.Forms.Button button_getAllSweets;
+        private System.Windows.Forms.Button button_getUsers;
     }
 }
 

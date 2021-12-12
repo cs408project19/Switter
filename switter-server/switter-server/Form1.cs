@@ -344,7 +344,7 @@ namespace switter_server
                             AddSweet(sweet);
                             richtextbox_log.AppendText(formatSweet(sweet) + "\n");
                             
-                            Byte[] sweetsBuffer = Encoding.Default.GetBytes("Message received.\n");
+                            Byte[] sweetsBuffer = Encoding.Default.GetBytes("Message received.");
                             thisClient.Send(sweetsBuffer);
                         }
                         else

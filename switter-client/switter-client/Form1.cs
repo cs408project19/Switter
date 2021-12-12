@@ -101,7 +101,8 @@ namespace switter_client
                         button_send.Enabled = false;
                         textBox_follow.Enabled = false;
                         button_follow.Enabled = false;
-                    } 
+                        button_getUsers.Enabled = false;
+                    }
                     // if login successful, fix the buttons and continue listening
                     else if (incomingMessage.Equals("Connected successfully.")){
                         logs.AppendText("Server: " + incomingMessage + "\n");
@@ -109,6 +110,7 @@ namespace switter_client
                         textBox_message.Enabled = true;
                         textBox_follow.Enabled = true;
                         button_follow.Enabled = true;
+                        button_getUsers.Enabled = true;
                         button_requestFollowing.Enabled = true;
                         button_getAllSweets.Enabled = true;
                         button_connect.Enabled = false;
@@ -186,6 +188,7 @@ namespace switter_client
                 textBox_follow.Enabled = false;
                 button_send.Enabled = false;
                 button_follow.Enabled = false;
+                button_getUsers.Enabled = false;
                 button_disconnect.Enabled = false;
                 button_requestFollowing.Enabled = false;
                 button_getAllSweets.Enabled = false;
@@ -213,6 +216,13 @@ namespace switter_client
         {
             logs.AppendText("Requested all sweets from the server\n");
             Byte[] buffer = Encoding.Default.GetBytes("request");
+            clientSocket.Send(buffer);
+        }
+
+        private void button_getUsers_Click(object sender, EventArgs e)
+        {
+            logs.AppendText("Requested all users from the server\n");
+            Byte[] buffer = Encoding.Default.GetBytes("getAllUsers");
             clientSocket.Send(buffer);
         }
     }
