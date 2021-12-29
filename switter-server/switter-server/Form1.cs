@@ -461,10 +461,9 @@ namespace switter_server
 
                     else if (incomingMessage.StartsWith("msg:")) {
                         // putting new sweet to correct form and adds to database
-                        string msg = incomingMessage.Substring(incomingMessage.IndexOf(':') + 1);
+                        string msg = incomingMessage.Substring(4);
 
-                        string lastID = sweets.Last().Split(';')[0];
-                        lastID = lastID.Trim(new char[] { '[', ']' });
+                        string lastID = sweets.Count > 0 ? sweets.Last().Split(';')[0].Trim(new char[] { '[', ']' }) : "0";
 
                         string sweetID = (Int32.Parse(lastID) + 1).ToString();
                         string sweetTime = ((long)DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalSeconds).ToString();
