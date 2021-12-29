@@ -19,6 +19,7 @@ namespace switter_server
         struct userData{
             public string username;
             public List<string> following;
+            public List<string> blocked;
         }
 
 
@@ -55,32 +56,51 @@ namespace switter_server
                 userData newData = new userData();
                 newData.username = user;
                 newData.following = new List<string>();
+                newData.blocked = new List<string>();
                 userDatas.Add(newData);
             }
 
-
-            // Load previously saved following data from txt file
             if (!File.Exists("followers.txt"))
             {
                 FileStream fs = File.OpenWrite("followers.txt");
                 fs.Close();
+
+                UpdateFollowerFile();
             }
 
+            if (!File.Exists("blocked.txt"))
+            {
+                FileStream fs = File.OpenWrite("blocked.txt");
+                fs.Close();
 
+
+                UpdateBlockedFile();
+            }
+
+            // Load previously saved following data from txt file
             List<string> followersContent = File.ReadAllLines("followers.txt").ToList<string>();
             foreach(string line in followersContent)
             {
                 string username = line.Substring(0, line.IndexOf(':'));
-                
-                foreach(userData u in userDatas)
-                {
-                    if (u.username == username)
-                    {
-                        u.following.AddRange(line.Substring(line.IndexOf(':') + 1).Split(',').ToList<string>());
-                    }
-                }
+
+                userData u = userDatas.Find(x => x.username == username);
+
+                string followingStr = line.Substring(line.IndexOf(':') + 1);
+                if(followingStr != "")
+                    u.following.AddRange(followingStr.Split(',').ToList<string>());
             }
 
+            List<string> blockedContent = File.ReadAllLines("blocked.txt").ToList<string>();
+            foreach (string line in blockedContent)
+            {
+                string username = line.Substring(0, line.IndexOf(':'));
+                userData u = userDatas.Find(x => x.username == username);
+
+
+                string blockedStr = line.Substring(line.IndexOf(':') + 1);
+                if (blockedStr != "")
+                    u.blocked.AddRange(blockedStr.Split(',').ToList<string>());
+            }
         }
 
         // initialize the server
@@ -189,7 +209,13 @@ namespace switter_server
             File.AppendAllText("sweets.txt", sweet + "\n");
         }
 
-        void AddFollower(string user, string toFollow)
+        void RemoveSweet(string sweetID)
+        {
+            sweets.Remove(sweets.Find(x => x.Split(';')[0] == sweetID));
+            File.WriteAllLines("sweets.txt", sweets);
+        }
+
+        void UpdateFollowerFile()
         {
             string allData = "";
 
@@ -198,6 +224,17 @@ namespace switter_server
                 allData += u.username + ":" + String.Join(",", u.following) + "\n";
             }
             File.WriteAllText("followers.txt", allData);
+        }
+
+        void UpdateBlockedFile()
+        {
+            string allData = "";
+
+            foreach (userData u in userDatas)
+            {
+                allData += u.username + ":" + String.Join(",", u.blocked) + "\n";
+            }
+            File.WriteAllText("blocked.txt", allData);
         }
 
         public DateTime UnixTimeToDateTime(long unixtime)
@@ -220,7 +257,7 @@ namespace switter_server
         {
             string s = "";
             foreach (string sweet in sweets)        // Accumulate all sweets in one string
-                if (sweet.Split(';')[2] != user)
+                if (sweet.Split(';')[2] != user && !userDatas.Find(x => x.username == sweet.Split(';')[2]).blocked.Contains(user)) 
                     s += formatSweet(sweet) + "\n";
             s = s == "" ? "No sweets found.\n" : "Here is all tweets: \n" + s; 
             return s;
@@ -228,19 +265,32 @@ namespace switter_server
 
         string getAllFollowingSweets(string user)
         {
-            userData a = new userData();
-            foreach (userData u in userDatas)
-            {
-                if (u.username == user)
-                    a = u;
-            }
             string s = "";
-            foreach (string sweet in sweets)        // Accumulate all sweets in one string
-                if (sweet.Split(';')[2] != user && a.following.IndexOf(sweet.Split(';')[2]) != -1)
-                    s += formatSweet(sweet) + "\n";
+            userData u = userDatas.Find(x => x.username == user);
+            foreach (string sweet in sweets.FindAll(x => u.following.Contains(x.Split(';')[2]) && !userDatas.Find(b => b.username == x.Split(';')[2]).blocked.Contains(user)))
+                s += formatSweet(sweet) + "\n";
             s = s == "" ? "No sweets found.\n" : "Here is all tweets: \n" + s;
             return s;
         }
+
+        string getUserSweets(string user)
+        {
+            string s = "";
+            foreach (string sweet in sweets.FindAll(x => x.Split(';')[2] == user))
+                s += formatSweet(sweet) + "\n";
+            return s;
+        }
+
+        List<string> getFollows(string user)
+        {
+            return userDatas.Find(x => x.username == user).following;
+        }
+
+        List<string> getFollowers(string user)
+        {
+            return userDatas.FindAll(x => x.following.Contains(user)).Select(x=>x.username).ToList();
+        }
+
 
         // listening for new commands from users
         private void Receive(Socket thisClient, string user) // updated
@@ -257,7 +307,7 @@ namespace switter_server
                     string incomingMessage = Encoding.Default.GetString(buffer);
                     incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
 
-                    if (incomingMessage == "request")       // if "request" message comes from client(user), print all the sweets except user's sweets
+                    if (incomingMessage == "requestAllSweets")       // if "request" message comes from client(user), print all the sweets except user's sweets
                     {
                         richtextbox_log.AppendText(user +" requested all sweets.\n");
 
@@ -272,6 +322,15 @@ namespace switter_server
                         Byte[] sweetsBuffer = Encoding.Default.GetBytes(getAllFollowingSweets(user));
                         thisClient.Send(sweetsBuffer);
                     }
+
+                    else if (incomingMessage == "requestMySweets")
+                    {
+                        richtextbox_log.AppendText(user + " requested own sweets.\n");
+
+                        Byte[] sweetsBuffer = Encoding.Default.GetBytes("own:" + getUserSweets(user));
+                        thisClient.Send(sweetsBuffer);
+                    }
+
                     // if user sends disconnect command, removes from connectedUsers
                     else if(incomingMessage == "disconnect")
                     {
@@ -290,66 +349,142 @@ namespace switter_server
                         thisClient.Send(usersBuffer);
                     }
 
+                    else if (incomingMessage == "getFollows")
+                    {
+                        richtextbox_log.AppendText(user + " requested followed users.\n");
+
+                        string[] follows = getFollows(user).ToArray();
+                        Byte[] usersBuffer;
+
+                        if(follows.Length>0)
+                            usersBuffer = Encoding.Default.GetBytes("Followed users:\n" + String.Join("\n", follows));
+                        else
+                            usersBuffer = Encoding.Default.GetBytes("You don't follow anyone!\n");
+                        thisClient.Send(usersBuffer);
+                    }
+
+                    else if (incomingMessage == "getFollowers")
+                    {
+                        richtextbox_log.AppendText(user + " requested followers.\n");
+
+                        string[] followers = getFollowers(user).ToArray();
+                        Byte[] usersBuffer;
+
+                        if (followers.Length > 0)
+                            usersBuffer = Encoding.Default.GetBytes("Followers:\n" + String.Join("\n", followers));
+                        else
+                            usersBuffer = Encoding.Default.GetBytes("Nobody is following you!\n");
+                        thisClient.Send(usersBuffer);
+                    }
+
                     //follow a user
                     else if (incomingMessage.StartsWith("follow:"))
                     {
                         //remove the "follow:" part from message
                         string userToFollow = incomingMessage.Substring(incomingMessage.IndexOf(':') + 1);
-                        //loop through userDatas to find the correct user
-                        foreach(userData u in userDatas)
+                        //find the correct userData
+                        userData u = userDatas.Find(x => x.username == user);
+                        
+                        if(userToFollow == user)
                         {
-                            if(u.username == user)
-                            {
-                                if(userToFollow == user)
-                                {
-                                    richtextbox_log.AppendText(user + " tried follow himself/herself.\n");
-                                    Byte[] usersBuffer = Encoding.Default.GetBytes("You cannot follow yourself.");
-                                    thisClient.Send(usersBuffer);
-                                }
-                                //check if the user is already following the other user
-                                else if(users.IndexOf(userToFollow)==-1)
-                                {
-                                    richtextbox_log.AppendText(userToFollow + " does not exist.\n");
-                                    Byte[] usersBuffer = Encoding.Default.GetBytes(userToFollow + " does not exist.");
-                                    thisClient.Send(usersBuffer);
-                                }
-                                else if(u.following.IndexOf(userToFollow) != -1)
-                                {
-                                    richtextbox_log.AppendText(user + " is already following " + userToFollow + ".\n");
-                                    Byte[] usersBuffer = Encoding.Default.GetBytes("You are already following " + userToFollow + ".");
-                                    thisClient.Send(usersBuffer);
-                                }
-                                else
-                                {
-                                    u.following.Add(userToFollow);
-                                    AddFollower(user, userToFollow);
-                                    richtextbox_log.AppendText(user + " is now following " + userToFollow + ".\n");
-                                    Byte[] usersBuffer = Encoding.Default.GetBytes("You are now following " + userToFollow + ".");
-                                    thisClient.Send(usersBuffer);
-                                }
-                            }
+                            richtextbox_log.AppendText(user + " tried follow himself/herself.\n");
+                            Byte[] usersBuffer = Encoding.Default.GetBytes("You cannot follow yourself.");
+                            thisClient.Send(usersBuffer);
                         }
+                        //check if the user is already following the other user
+                        else if(users.IndexOf(userToFollow)==-1)
+                        {
+                            richtextbox_log.AppendText(userToFollow + " does not exist.\n");
+                            Byte[] usersBuffer = Encoding.Default.GetBytes(userToFollow + " does not exist.");
+                            thisClient.Send(usersBuffer);
+                        }
+                        else if(u.following.IndexOf(userToFollow) != -1)
+                        {
+                            richtextbox_log.AppendText(user + " is already following " + userToFollow + ".\n");
+                            Byte[] usersBuffer = Encoding.Default.GetBytes("You are already following " + userToFollow + ".");
+                            thisClient.Send(usersBuffer);
+                        }
+                        else if(userDatas.Find(x=>x.username==userToFollow).blocked.Contains(user))
+                        {
+                            richtextbox_log.AppendText(userToFollow + " is blocked " + user + ", so can't follow.\n");
+                            Byte[] usersBuffer = Encoding.Default.GetBytes("You can't follow a user that has blocked you. (" + userToFollow + ")");
+                            thisClient.Send(usersBuffer);
+                        }
+                        else
+                        {
+                            u.following.Add(userToFollow);
+                            UpdateFollowerFile();
+                            richtextbox_log.AppendText(user + " is now following " + userToFollow + ".\n");
+                            Byte[] usersBuffer = Encoding.Default.GetBytes("You are now following " + userToFollow + ".");
+                            thisClient.Send(usersBuffer);
+                        }       
+                    }
+
+                    else if (incomingMessage.StartsWith("block:"))
+                    {
+                        //remove the "follow:" part from message
+                        string userToBlock = incomingMessage.Substring(incomingMessage.IndexOf(':') + 1);
+
+                        //find the correct userData
+                        userData u = userDatas.Find(x => x.username == user);
+
+                        if (userToBlock == user)
+                        {
+                            richtextbox_log.AppendText(user + " tried block himself/herself.\n");
+                            Byte[] usersBuffer = Encoding.Default.GetBytes("You cannot block yourself.");
+                            thisClient.Send(usersBuffer);
+                        }
+                        //check if the user is already following the other user
+                        else if (users.IndexOf(userToBlock) == -1)
+                        {
+                            richtextbox_log.AppendText(userToBlock + " does not exist.\n");
+                            Byte[] usersBuffer = Encoding.Default.GetBytes(userToBlock + " does not exist.");
+                            thisClient.Send(usersBuffer);
+                        }
+                        else if (u.blocked.IndexOf(userToBlock) != -1)
+                        {
+                            richtextbox_log.AppendText(user + " is already blocked " + userToBlock + ".\n");
+                            Byte[] usersBuffer = Encoding.Default.GetBytes("You have already blocked " + userToBlock + ".");
+                            thisClient.Send(usersBuffer);
+                        }
+                        else
+                        {
+                            u.blocked.Add(userToBlock);
+                            userDatas.Find(x => x.username == userToBlock).following.Remove(user);
+                            UpdateBlockedFile();
+                            UpdateFollowerFile();
+                            richtextbox_log.AppendText(user + " blocked " + userToBlock + ".\n");
+                            Byte[] usersBuffer = Encoding.Default.GetBytes("You are now blocked " + userToBlock + ".");
+                            thisClient.Send(usersBuffer);
+                        }
+                    }
+
+                    else if (incomingMessage.StartsWith("msg:")) {
+                        // putting new sweet to correct form and adds to database
+                        string msg = incomingMessage.Substring(incomingMessage.IndexOf(':') + 1);
+
+                        string lastID = sweets.Last().Split(';')[0];
+                        lastID = lastID.Trim(new char[] { '[', ']' });
+
+                        string sweetID = (Int32.Parse(lastID) + 1).ToString();
+                        string sweetTime = ((long)DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalSeconds).ToString();
+                        string sweet = sweetID + ";" + sweetTime + ";" + user + ";" + msg;
+                        AddSweet(sweet);
+                        richtextbox_log.AppendText(formatSweet(sweet) + "\n");
+                            
+                        Byte[] sweetsBuffer = Encoding.Default.GetBytes("Message received.");
+                        thisClient.Send(sweetsBuffer);
+                    }
+                    
+                    else if (incomingMessage.StartsWith("delete:"))
+                    {
+                        string sweetID = incomingMessage.Substring(7);
+                        
+                        RemoveSweet(sweetID);
                     }
 
                     else
-                    {
-                        // putting new sweet to correct form and adds to database
-                        if (incomingMessage.Split(';').Length >= 2)
-                        {
-                            string msg = incomingMessage.Substring(incomingMessage.IndexOf(';') + 1);
-
-                            string sweetID = (sweets.Count + 1).ToString();
-                            string sweetTime = ((long)DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalSeconds).ToString();
-                            string sweet = sweetID + ";" + sweetTime + ";" + user + ";" + msg;
-                            AddSweet(sweet);
-                            richtextbox_log.AppendText(formatSweet(sweet) + "\n");
-                            
-                            Byte[] sweetsBuffer = Encoding.Default.GetBytes("Message received.");
-                            thisClient.Send(sweetsBuffer);
-                        }
-                        else
-                            richtextbox_log.AppendText("Invalid message!\n");
-                    }
+                        richtextbox_log.AppendText("Invalid request!\n");
 
                 }
                 catch
@@ -366,8 +501,6 @@ namespace switter_server
                 }
             }
         }
-
-
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {

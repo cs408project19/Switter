@@ -102,6 +102,12 @@ namespace switter_client
                         textBox_follow.Enabled = false;
                         button_follow.Enabled = false;
                         button_getUsers.Enabled = false;
+                        button_getFollows.Enabled = false;
+                        button_block.Enabled = false;
+                        textBox_block.Enabled = false;
+                        button_getFollowers.Enabled = false;
+                        button_getMySweets.Enabled = false;
+                        button_deleteSweet.Enabled = false;
                     }
                     // if login successful, fix the buttons and continue listening
                     else if (incomingMessage.Equals("Connected successfully.")){
@@ -111,10 +117,23 @@ namespace switter_client
                         textBox_follow.Enabled = true;
                         button_follow.Enabled = true;
                         button_getUsers.Enabled = true;
+                        button_getFollows.Enabled = true;
+                        button_block.Enabled = true;
+                        textBox_block.Enabled = true;
+                        button_getFollowers.Enabled = true;
+                        button_getMySweets.Enabled = true;
+                        button_deleteSweet.Enabled = true;
                         button_requestFollowing.Enabled = true;
                         button_getAllSweets.Enabled = true;
                         button_connect.Enabled = false;
 
+                    }
+                    else if (incomingMessage.StartsWith("own:"))
+                    {
+                        string ownSweets = incomingMessage.Substring(4);
+                        listBox1.Items.Clear();
+                        char[] sep = { '\n' };
+                        listBox1.Items.AddRange(ownSweets.Split(sep, StringSplitOptions.RemoveEmptyEntries));
                     }
                     else if(incomingMessage != "")  // If incoming message is not empty
                     {
@@ -152,15 +171,15 @@ namespace switter_client
         // posting sweet to server
         private void button_send_Click(object sender, EventArgs e)
         {
-            string message = username + ";" + textBox_message.Text;
+            string message = "msg:" + textBox_message.Text;
 
             // checks message
             if (message != "")
             {
                 Byte[] buffer = Encoding.Default.GetBytes(message);
                 clientSocket.Send(buffer);
+                logs.AppendText("Me: " + textBox_message.Text + "\n");
                 textBox_message.Text = "";
-                logs.AppendText("Me: " + message.Substring(message.IndexOf(";") + 1) + "\n");
             }
         }
 
@@ -189,6 +208,10 @@ namespace switter_client
                 button_send.Enabled = false;
                 button_follow.Enabled = false;
                 button_getUsers.Enabled = false;
+                button_getFollows.Enabled = false;
+                button_getFollowers.Enabled = false;
+                button_block.Enabled = false;
+                textBox_block.Enabled = false;
                 button_disconnect.Enabled = false;
                 button_requestFollowing.Enabled = false;
                 button_getAllSweets.Enabled = false;
@@ -215,7 +238,7 @@ namespace switter_client
         private void button_getAllSweets_Click(object sender, EventArgs e)
         {
             logs.AppendText("Requested all sweets from the server\n");
-            Byte[] buffer = Encoding.Default.GetBytes("request");
+            Byte[] buffer = Encoding.Default.GetBytes("requestAllSweets");
             clientSocket.Send(buffer);
         }
 
@@ -224,6 +247,43 @@ namespace switter_client
             logs.AppendText("Requested all users from the server\n");
             Byte[] buffer = Encoding.Default.GetBytes("getAllUsers");
             clientSocket.Send(buffer);
+        }
+
+        private void button_getFollows_Click(object sender, EventArgs e)
+        {
+            logs.AppendText("Requested users followed from the server\n");
+            Byte[] buffer = Encoding.Default.GetBytes("getFollows");
+            clientSocket.Send(buffer);
+        }
+
+        private void button_getFollowers_Click(object sender, EventArgs e)
+        {
+            logs.AppendText("Requested followers from the server\n");
+            Byte[] buffer = Encoding.Default.GetBytes("getFollowers");
+            clientSocket.Send(buffer);
+        }
+
+        private void button_block_Click(object sender, EventArgs e)
+        {
+            logs.AppendText("Blocking " + textBox_block.Text + "\n");
+            Byte[] buffer = Encoding.Default.GetBytes("block:" + textBox_block.Text);
+            clientSocket.Send(buffer);
+        }
+
+        private void button_getMySweets_Click(object sender, EventArgs e)
+        {
+            logs.AppendText("Requested own sweets from the server\n");
+            Byte[] buffer = Encoding.Default.GetBytes("requestMySweets");
+            clientSocket.Send(buffer);
+        }
+
+        private void button_deleteSweet_Click(object sender, EventArgs e)
+        {
+            int sweetID = Int32.Parse(listBox1.SelectedItem.ToString().Split(']')[0].Substring(1));
+            logs.AppendText("Deleting sweet with id " + sweetID + "\n");
+            Byte[] buffer = Encoding.Default.GetBytes("delete:"+sweetID);
+            clientSocket.Send(buffer);
+            listBox1.Items.RemoveAt(listBox1.SelectedIndex);
         }
     }
 }
