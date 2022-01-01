@@ -134,6 +134,10 @@ namespace switter_client
                         listBox1.Items.Clear();
                         char[] sep = { '\n' };
                         listBox1.Items.AddRange(ownSweets.Split(sep, StringSplitOptions.RemoveEmptyEntries));
+                        if (ownSweets.Length == 0)
+                            logs.AppendText("You have no sweets\n");
+                        else
+                            logs.AppendText("Server: Your sweets are listed.\n");
                     }
                     else if(incomingMessage != "")  // If incoming message is not empty
                     {
@@ -279,11 +283,18 @@ namespace switter_client
 
         private void button_deleteSweet_Click(object sender, EventArgs e)
         {
-            int sweetID = Int32.Parse(listBox1.SelectedItem.ToString().Split(']')[0].Substring(1));
-            logs.AppendText("Deleting sweet with id " + sweetID + "\n");
-            Byte[] buffer = Encoding.Default.GetBytes("delete:"+sweetID);
-            clientSocket.Send(buffer);
-            listBox1.Items.RemoveAt(listBox1.SelectedIndex);
+            if(listBox1.SelectedIndex!=-1) { 
+                int sweetID = Int32.Parse(listBox1.SelectedItem.ToString().Split(']')[0].Substring(1));
+                logs.AppendText("Deleting sweet with id " + sweetID + "\n");
+                Byte[] buffer = Encoding.Default.GetBytes("delete:"+sweetID);
+                clientSocket.Send(buffer);
+                listBox1.Items.RemoveAt(listBox1.SelectedIndex);
+            }
+            
+            else
+            {
+                logs.AppendText("You must select a sweet to delete.\n");
+            }
         }
     }
 }
